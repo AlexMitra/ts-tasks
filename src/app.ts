@@ -114,7 +114,7 @@ createCustomer('Francis')
 createCustomer('Francis', 22)
 createCustomer('Francis3', 23, 'Minsk')
 
-const getBookByID = (id: Book['id']): Book | undefined => {
+const getBookByID = (id: Book['id']): BookOrUndefined => {
     return getAllBooks().find(b => b.id === id)
 }
 
@@ -249,7 +249,7 @@ console.log(getProperty(myBook, 'markDamaged'))
 console.log(getProperty(myBook, 'isbn'))
 
 // Task 5.01
-class ReferenceItem {
+abstract class ReferenceItem {
     // title: string
     // year: number
     //
@@ -281,14 +281,16 @@ class ReferenceItem {
     printItem(): void {
         console.log(`${this.title} was published in ${this.year} in ${ReferenceItem.department}`)
     }
+
+    abstract printCitation(): void;
 }
 
-const ref = new ReferenceItem(1, 'TS Course', 2023)
-ref.publisher = 'Orelly'
-console.log(ref.printItem())
-console.log(ref.publisher)
-console.log(ref)
-console.log(ref.getID())
+// const ref = new ReferenceItem(1, 'TS Course', 2023)
+// ref.publisher = 'Orelly'
+// console.log(ref.printItem())
+// console.log(ref.publisher)
+// console.log(ref)
+// console.log(ref.getID())
 
 // Task 5.02
 class Encyclopedia extends ReferenceItem {
@@ -301,7 +303,69 @@ class Encyclopedia extends ReferenceItem {
         // INTERESTING: use this instead of super
         console.log(`${this.title} was published in ${ReferenceItem.department}, Edition: ${this.edition} (${this.year})`)
     }
+
+    printCitation(): void {
+        console.log(`${this.title} – ${this.year}`)
+    }
 }
 
 const refBook: Encyclopedia = new Encyclopedia(2, 'Programming TS', 2022, 2)
 console.log(refBook.printItem())
+
+// Task 5.03
+const refBook2: ReferenceItem = new Encyclopedia(3, 'Tackling TypeScript', 2023, 2)
+refBook2.printCitation()
+
+// Task 5.04
+class UniversityLibrarian implements Librarian {
+
+    constructor(name: string) {
+        this.name = name;
+    }
+
+    assistCustomer(custName: string, bookTitle: string): void {
+        console.log(`${this.name} is assisting ${custName} with the book ${bookTitle}`)
+    }
+
+    department: string;
+    email: string;
+    name: string;
+
+}
+
+const favoriteLibrarian2: Librarian = new UniversityLibrarian('Alex');
+favoriteLibrarian2.assistCustomer('Tanya', 'Tackling TypeScript')
+
+// Task 5.05
+type PersonBook = Person & Book
+
+const myNextBook: PersonBook = {
+    name: 'Alex',
+    email: 'example@gmail.com',
+    id: 1,
+    title: 'Tackling TypeScript',
+    author: 'Dr. Axel Rauschmayer',
+    available: true,
+    category: Category.TypeScript,
+    pages: 200,
+}
+console.log(myNextBook)
+
+type BookOrUndefined = Book | undefined
+
+interface TOptions {
+    duration?: number,
+    speed?: number,
+}
+const setDefaultConfig = (options: TOptions): TOptions => {
+    const defaulDuration: number = 100
+    const defaultSpeed: number = 220
+    options.duration ??= defaulDuration
+    options.speed ??= defaultSpeed
+    return options
+}
+
+console.log(setDefaultConfig({ duration: 500}))
+console.log(setDefaultConfig({ speed: 60}))
+console.log(setDefaultConfig({ }))
+// console.log(setDefaultConfig()) compilation error
