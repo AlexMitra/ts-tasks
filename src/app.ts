@@ -8,6 +8,7 @@ import {
     СreateCustomerFunctionType,
     BookRequiredProps,
     RemoveProps,
+    Unpromisify
 } from './types'
 import { Book, Logger, Person, Author, Librarian, Magazine } from './interfaces'
 import { ReferenceItem, UL, Encyclopedia as RefBook, Shelf, Shelf2 } from './classes'
@@ -31,7 +32,11 @@ import {
     assertRefBookInstance,
     printRefBook,
     purge,
-    getObjectProperty
+    getObjectProperty,
+    getBooksByCategory,
+    logCategorySearch,
+    getBooksByCategoryPromise,
+    logSearchResults
 } from './functions'
 
 /* eslint-disable no-redeclare */
@@ -354,6 +359,25 @@ console.log(logParameterAndMethodTest)
 const positiveTest: RefBook = new RefBook(2, 'Programming TS', 2022, 2)
 positiveTest.copies = 2
 positiveTest.copies = 5
-positiveTest.copies = 5.5
+// positiveTest.copies = 5.5 // error
 // positiveTest.copies = 0 // error
 console.log(positiveTest)
+
+// Task 9.01
+// getBooksByCategory(Category.JavaScript, logCategorySearch)
+// getBooksByCategory(Category.Software, logCategorySearch)
+
+// Task 9.02
+getBooksByCategoryPromise(Category.JavaScript).then(data => {
+    console.log(data)
+    return Promise.resolve(data.length)
+}).then(console.log)
+  .catch(console.log)
+getBooksByCategoryPromise(Category.Software).then(console.log).catch(console.log)
+
+type retyrnTypePromise = ReturnType<typeof getBooksByCategoryPromise>
+type returnType = Unpromisify<retyrnTypePromise>
+
+// Task 9.03
+logSearchResults(Category.JavaScript).then(console.log).catch(console.log)
+logSearchResults(Category.TypeScript).then(console.log).catch(console.log)

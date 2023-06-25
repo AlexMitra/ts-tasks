@@ -65,6 +65,8 @@ export type RemoveProps<T extends object, TProp extends keyof T> = {
 export type BookRequiredPropsType = RemoveProps<Book, BookOptionalPropsUnion>
 export type BookOptionalPropsType = RemoveProps<Book, BookRequiredPropsUnion>
 
+export type Unpromisify<T> = T extends Promise<infer R> ? R : never
+
 export {
 	Library as LibraryT,
 	BookProperties,

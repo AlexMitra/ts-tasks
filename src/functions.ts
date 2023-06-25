@@ -1,4 +1,4 @@
-import { Book, TOptions } from './interfaces'
+import { Book, TOptions, LibMgrCallback, Callback } from './interfaces'
 import { Category } from './enums'
 import { BookOrUndefined, BookProperties, LibraryT } from './types'
 import { Encyclopedia as RefBook } from './classes'
@@ -174,3 +174,41 @@ export function updateReturnBool(flag: boolean):string | boolean {
 
 // const updateTest2: updateT = updateNum // error
 // const updateTest3: updateT = updateReturnBool // error
+
+export function getBooksByCategory(category: Category, callback: Callback<string[]>): void {
+	setTimeout(() => {
+		try {
+			const titles = getBookTitlesByCategory(category)
+			if(titles.length) {
+				callback(null, titles)
+			} else {
+				throw new Error('No books have found')
+			}
+		} catch(e) {
+			callback(e, null)
+		}
+	}, 2000)
+}
+
+export function logCategorySearch(err: Error | null, titles: string[] | null): void {
+	console.log(err ? err : titles)
+}
+
+export function getBooksByCategoryPromise(category: Category): Promise<string[]> {
+	const p: Promise<string[]> = new Promise((resolve, reject) => {
+		setTimeout(() => {
+			const titles: string[] = getBookTitlesByCategory(category)
+			if (titles.length) {
+				return resolve(titles)
+			} else {
+				return reject('No books have found')
+			}
+		}, 2000)
+	})
+	return p;
+}
+
+export async function logSearchResults(category: Category): Promise<number> {
+	const titles: string[] = await getBooksByCategoryPromise(category)
+	return titles.length
+}
