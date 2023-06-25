@@ -325,7 +325,7 @@ console.log(loggerTest['age'])
 loggerTest.name = 'Anna';
 // loggerTest['printLibrarian']()
 // (loggerTest as any).printLibrarian()
-(loggerTest as UL.UniversityLibrarian & { printLibrarian: () => void }).printLibrarian()
+// (loggerTest as UL.UniversityLibrarian & { printLibrarian: () => void }).printLibrarian()
 
 // Task 8.03
 const writableTest = new UL.UniversityLibrarian('writable decorator test')
@@ -344,3 +344,16 @@ writableTest.teachCommunity()
 // Task 8.04
 const timeoutTest: RefBook = new RefBook(2, 'Programming TS', 2022, 2)
 timeoutTest.printItem()
+
+// Tasks 8.05, 8.06
+const logParameterAndMethodTest: Librarian = new UL.UniversityLibrarian('Alex');
+favoriteLibrarian2.assistCustomer('Tanya', 'Tackling TypeScript')
+console.log(logParameterAndMethodTest)
+
+// Task 8.07
+const positiveTest: RefBook = new RefBook(2, 'Programming TS', 2022, 2)
+positiveTest.copies = 2
+positiveTest.copies = 5
+positiveTest.copies = 5.5
+// positiveTest.copies = 0 // error
+console.log(positiveTest)

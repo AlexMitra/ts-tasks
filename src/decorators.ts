@@ -40,3 +40,78 @@ export function timeout(ms: number) {
 		}
 	}
 }
+
+export function logParameter(target: any, methodName: string, index: number): void {
+	const key = `${methodName}_decor_params_indexes`
+	const proto = typeof target === 'function' ? target.prototype : target
+	proto[key] ??= []
+	proto[key].push(index)
+}
+
+export function logMethod(target: any, methodName: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+	const original = descriptor.value
+	descriptor.value = function (...args: unknown[]) {
+		const key = `${methodName}_decor_params_indexes`
+		const proto = typeof target === 'function' ? target.prototype : target
+		const indexes = proto[key] || []
+		if (Array.isArray(indexes)) {
+			indexes.forEach(index => {
+				console.log(`Method: ${methodName}, ParamIndex: ${index}, ParamValue: ${args[index]}`)
+			})
+		}
+		original.apply(this, args)
+	}
+	return descriptor
+}
+
+function makeProperty<T>(
+	prototype: any,
+	propertyName: string,
+	getTransformer?: (value: any) => T,
+	setTransformer?: (value: any) => T
+) {
+	const values = new Map<any, T>();
+
+	Object.defineProperty(prototype, propertyName, {
+		set(firstValue: any) {
+			Object.defineProperty(this, propertyName, {
+				get() {
+					if (getTransformer) {
+						return getTransformer(values.get(this));
+					} else {
+						values.get(this);
+					}
+				},
+				set(value: any) {
+					if (setTransformer) {
+						values.set(this, setTransformer(value));
+					} else {
+						values.set(this, value);
+					}
+				},
+				enumerable: true
+			});
+			this[propertyName] = firstValue;
+		},
+		enumerable: true,
+		configurable: true
+	});
+}
+
+export function format(prefix: string = 'Mr./Mrs.') {
+	return function (target: any, propertyName: string) {
+		const proto = typeof target === 'function' ? target.prototype : target
+		makeProperty(proto, propertyName, value => `${prefix} ${value}`, value => value);
+	}
+}
+
+export function positiveInteger(target: any, зкўзукенТфьу: string, descriptor: PropertyDescriptor) {
+	const originalSet = descriptor.set
+
+	descriptor.set = function (value: number) {
+		if(value < 1 || !Number.isInteger(value)) {
+			throw new Error('Value must be integer and more than 1')
+		}
+		originalSet?.call(this, value)
+	}
+}

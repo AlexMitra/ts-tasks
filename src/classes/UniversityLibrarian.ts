@@ -1,22 +1,22 @@
 import * as Interfaces from '../interfaces'
-import { freeze, logger, writable } from '../decorators'
+import { freeze, logger, writable, logParameter, logMethod, format } from '../decorators'
 
 // @freeze('like a pro')
 // @ts-ignore
-@logger
+// @logger
 export class UniversityLibrarian implements Interfaces.Librarian {
+	department: string;
+	email: string;
+	@format() name: string
 
 	constructor(name: string) {
 		this.name = name;
 	}
 
-	assistCustomer(custName: string, bookTitle: string): void {
+	@logMethod
+	assistCustomer(@logParameter custName: string, @logParameter bookTitle: string): void {
 		console.log(`${this.name} is assisting ${custName} with the book ${bookTitle}`)
 	}
-
-	department: string;
-	email: string;
-	name: string;
 
 	@writable(true)
 	assistFaculty(): void {
