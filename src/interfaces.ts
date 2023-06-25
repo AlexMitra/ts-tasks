@@ -1,8 +1,11 @@
 import { Category } from './enums'
+interface ITitle {
+	title: string
+}
 
-interface Book {
+interface Book extends ITitle{
 	id: number,
-	title: string,
+	// title: string,
 	author: string,
 	available: boolean,
 	category: Category,
@@ -33,4 +36,13 @@ interface TOptions {
 	speed?: number,
 }
 
-export { Book, DamageLogger as Logger, TOptions, Person, Author, Librarian }
+interface Magazine extends ITitle{
+	// title: string,
+	publisher: string
+}
+
+interface ShelfItem {
+	title: string
+}
+
+export { Book, DamageLogger as Logger, TOptions, Person, Author, Librarian, Magazine, ShelfItem }

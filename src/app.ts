@@ -1,7 +1,16 @@
 import { Category } from './enums'
-import { LibraryT, PersonBook } from './types'
-import { Book, Logger, Person, Author, Librarian } from './interfaces'
-import { ReferenceItem, UL, Encyclopedia as RefBook } from './classes'
+import {
+    LibraryT,
+    PersonBook,
+    BookRequiredFields,
+    UpdatedBook,
+    AuthorWoEmail,
+    СreateCustomerFunctionType,
+    BookRequiredProps,
+    RemoveProps,
+} from './types'
+import { Book, Logger, Person, Author, Librarian, Magazine } from './interfaces'
+import { ReferenceItem, UL, Encyclopedia as RefBook, Shelf, Shelf2 } from './classes'
 import type { Library } from './classes'
 import {
     showHello,
@@ -20,7 +29,9 @@ import {
     getProperty,
     setDefaultConfig,
     assertRefBookInstance,
-    printRefBook
+    printRefBook,
+    purge,
+    getObjectProperty
 } from './functions'
 
 /* eslint-disable no-redeclare */
@@ -190,3 +201,146 @@ const warsawLib: Library = {
     address: 'Dobra 53-50, 00-316 Warsaw'
 }
 console.log(warsawLib)
+
+// Task 7.01
+const inventory = [
+    { id: 10, title: 'The C Programming Language', author: 'K & R', available: true, category: Category.Software },
+    { id: 11, title: 'Code Complete', author: 'Steve McConnell', available: true, category: Category.Software },
+    { id: 12, title: '8-Bit Graphics with Cobol', author: 'A. B.', available: true, category: Category.Software },
+    { id: 13, title: 'Cool autoexec.bat Scripts!', author: 'C. D.', available: true, category: Category.Software }
+];
+
+// console.log(purge(inventory))
+// console.log(purge([1,2,3,4]))
+// console.log(purge([1]))
+//
+// const purgeNumbers = purge<number>
+// console.log(purgeNumbers([7, 7, 8, 8]))
+// console.log(purgeNumbers(['7', '7', '8', '8'])) // compilation error
+
+// Task 7.02
+const bookShelf = new Shelf(inventory)
+console.log(bookShelf.getFirst())
+
+const magazines = [
+    { title: 'Programming Language Monthly', publisher: 'Code Mags' },
+    { title: 'Literary Fiction Quarterly', publisher: 'College Press' },
+    { title: 'Five Points', publisher: 'GSU' }
+];
+
+const magazineShelf = new Shelf(magazines)
+console.log(magazineShelf.getFirst())
+magazineShelf.printTitles()
+console.log(magazineShelf.find('Five Points'))
+
+console.log('\nShelf2 TEST below \n')
+console.log('===========================================')
+const testBook: Book = { id: 10, title: 'The C Programming Language', author: 'K & R', available: true, category: Category.Software }
+const testMagazine: Magazine = { title: 'Programming Language Monthly', publisher: 'Code Mags' }
+const testBookAndMagazine = [testBook, testMagazine];
+const bookShelf2 = new Shelf2(inventory)
+const magazineShelf2 = new Shelf2(magazines)
+const testShelf2 = new Shelf2(testBookAndMagazine)
+console.log(bookShelf2)
+console.log(magazineShelf2)
+console.log(testShelf2)
+console.log(testShelf2.printTitles())
+console.log('===========================================')
+
+// Task 7.03
+console.log(getObjectProperty(myBook, 'title'))
+console.log(getObjectProperty(myBook, 'markDamaged'))
+
+// Task 7.04
+const bookRequiredFields: BookRequiredFields = {
+    id: 0,
+    title: 'title',
+    author: 'author',
+    available: true,
+    category: Category.Software,
+    pages: 777,
+    markDamaged(reason: string): void {
+        console.log(`Damaged due to ${reason}`)
+    }
+}
+console.log(bookRequiredFields)
+
+const updatedBook: UpdatedBook = {
+    id: 1,
+    title: 'Partial Book'
+}
+console.log(updatedBook)
+
+const justAuthor: AuthorWoEmail = {
+    name: 'Francis',
+    numBooksPublished: 1
+}
+console.log(justAuthor)
+
+// 7.04 point 7
+const params: Parameters<СreateCustomerFunctionType> = ['Francis', 30, 'Warsaw']
+createCustomer(...params)
+
+// Task 7.05
+const bookRequiredTest: BookRequiredProps = {
+    id: 1,
+    title: 'title',
+    author: 'author',
+    available: true,
+    category: Category.CSS,
+    // pages: 100, // Type 'number' is not assignable to type 'never'.
+}
+
+const bookWithoutIdAndTitle: RemoveProps<Book, "id" | "title"> = {
+    author: 'author',
+    available: true,
+    category: Category.CSS,
+    pages: 100,
+    markDamaged(reason: string): void {
+
+    }
+}
+
+const bookWithoutAuthor: RemoveProps<Book, "author"> = {
+    id: 1,
+    title: 'book withour author',
+    available: true,
+    category: Category.CSS,
+    pages: 100,
+    markDamaged(reason: string): void {
+
+    }
+}
+
+// Task 8.01
+const freezeTest: Librarian = new UL.UniversityLibrarian('decorator freeze test')
+// UL.UniversityLibrarian['age'] = 29 // error: Cannot add property age, object is not extensible
+const librarianProto = Object.getPrototypeOf(freezeTest)
+// librarianProto['newFunc'] = () => console.log('extend prototype function')
+// librarianProto.newFunc()
+
+// Task 8.02
+const loggerTest = new UL.UniversityLibrarian('decorator logger test')
+console.log(loggerTest['age'])
+loggerTest.name = 'Anna';
+// loggerTest['printLibrarian']()
+// (loggerTest as any).printLibrarian()
+(loggerTest as UL.UniversityLibrarian & { printLibrarian: () => void }).printLibrarian()
+
+// Task 8.03
+const writableTest = new UL.UniversityLibrarian('writable decorator test')
+writableTest.assistFaculty()
+writableTest.teachCommunity()
+
+writableTest.assistFaculty = function () {
+    console.log('Changed assist function')
+}
+// writableTest.teachCommunity = function () { // error: can't rewrite it
+//     console.log('Changed teach function')
+// }
+writableTest.assistFaculty()
+writableTest.teachCommunity()
+
+// Task 8.04
+const timeoutTest: RefBook = new RefBook(2, 'Programming TS', 2022, 2)
+timeoutTest.printItem()

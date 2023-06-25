@@ -1,3 +1,5 @@
+import { timeout } from '../decorators'
+
 export abstract class ReferenceItem {
 	// title: string
 	// year: number
@@ -27,6 +29,7 @@ export abstract class ReferenceItem {
 		return this.#id
 	}
 
+	@timeout(3000)
 	printItem(): void {
 		console.log(`${this.title} was published in ${this.year} in ${ReferenceItem.department}`)
 	}

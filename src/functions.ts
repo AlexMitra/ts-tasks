@@ -141,3 +141,36 @@ export function printRefBook(data: any): void {
 	assertRefBookInstance(data)
 	data.printItem()
 }
+
+export function purge<T>(inventory: T[] = []):T[] {
+	return inventory.length > 2 ? [...inventory].slice(2) : []
+}
+
+export function getObjectProperty<TObject extends object, TKey extends keyof TObject>(obj: TObject, propName: TKey):TObject[TKey] | string {
+	const field = obj[propName]
+	return field instanceof Function ? field.name : field
+}
+
+// Task 7.05 point 8 HW
+type updateSourceT = (flag: boolean) => string | number
+
+type trueT = true
+type falseT = false
+type returnT = ReturnType<updateSourceT>
+type updateT = (flag: trueT | falseT) => returnT
+
+export function update(flag: boolean):string | number {
+	return flag ? 'hello' : 123
+}
+
+const updateTest: updateT = update
+
+export function updateNum(flag: number):string | number {
+	return flag > 0 ? 'hello' : 123
+}
+export function updateReturnBool(flag: boolean):string | boolean {
+	return flag ? 'hello' : false
+}
+
+// const updateTest2: updateT = updateNum // error
+// const updateTest3: updateT = updateReturnBool // error

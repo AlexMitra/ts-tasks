@@ -1,3 +1,3 @@
-const enum Category {JavaScript, CSS, HTML, TypeScript, Angular};
+const enum Category {JavaScript, CSS, HTML, TypeScript, Angular, Software};
 
 export { Category }
